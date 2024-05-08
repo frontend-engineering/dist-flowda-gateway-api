@@ -1,0 +1,85 @@
+name: Deploy
+on:
+  push:
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - id: my_vars
+        name: Set tar name
+        run: |
+          echo "::set-output name=tar_name::$(date +'%Y%m%dT%H%M%S')-$(echo $GITHUB_SHA | cut -c 1-7)"
+
+      - name: Tar artifact
+        run: |
+          tar --exclude .git --exclude .github --exclude "libquery_engine-*.node" -czvf ${{ runner.temp }}/${{ steps.my_vars.outputs.tar_name }}.tar.gz .
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.my_vars.outputs.tar_name }}
+          path: ${{ runner.temp }}/${{ steps.my_vars.outputs.tar_name }}.tar.gz
+
+      - name: Setup ssh
+        run: |
+          echo "${{ secrets.SERVER_KEY }}" > ${{ runner.temp }}/private_key.pem
+          chmod 600 ${{ runner.temp }}/private_key.pem
+          mkdir ~/.ssh
+          touch ~/.ssh/known_hosts
+          ssh-keygen -y -f ${{ runner.temp }}/private_key.pem > ${{ runner.temp }}/private_key.pub
+
+      - uses: nick-fields/retry@v3
+        name: Add to knonw_hosts
+        with:
+          timeout_minutes: 2
+          max_attempts: 10
+          command: ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Scp to remote
+        run: |
+          scp -i ${{ runner.temp }}/private_key.pem ${{ runner.temp }}/${{ steps.my_vars.outputs.tar_name }}.tar.gz ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/root/cms/flowda-gateway-api
+
+      - name: Backup
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: root
+          key: ${{ secrets.SERVER_KEY }}
+          script: |
+            cd /root/cms/flowda-gateway-api
+            tar --exclude "node_modules" -zcf release-before-${{ steps.my_vars.outputs.tar_name }}.tar.gz release
+
+      - name: Untar and restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: root
+          key: ${{ secrets.SERVER_KEY }}
+          script: |
+            cd /root/cms/flowda-gateway-api
+            tar -xzf ${{ steps.my_vars.outputs.tar_name }}.tar.gz -C ./release/
+
+            cd /root/cms/flowda-gateway-api/release/
+            touch release-note.txt
+            echo ${{ steps.my_vars.outputs.tar_name }}\n >> release-note.txt
+
+            cd /root/cms/flowda-gateway-api/release/
+            cp -rf .yalc dist/apps/flowda-gateway-api
+
+            cd /root/cms/flowda-gateway-api/release/dist/apps/flowda-gateway-api
+            pnpm dlx pnpm@7.33.7 i --frozen-lockfile --ignore-scripts
+
+            cd /root/cms/flowda-gateway-api/release
+            cp -rf node_modules/@prisma/ dist/apps/flowda-gateway-api/node_modules/@prisma
+
+            pm2 restart flowda-gateway-api
+            sleep 5
+            pm2 logs flowda-gateway-api --nostream

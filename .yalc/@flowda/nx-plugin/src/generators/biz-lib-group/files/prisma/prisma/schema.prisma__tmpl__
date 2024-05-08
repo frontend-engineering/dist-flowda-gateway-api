@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "<%= offsetFromRoot %>.yalc/@prisma/client-<%= dbPrefix %>"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+generator zod {
+  provider                  = "node <%= offsetFromRoot %>node_modules/zod-prisma-types/dist/bundle/bin.js"
+  createModelTypes          = true
+  createInputTypes          = false
+  addInputTypeValidation    = false
+  addIncludeType            = true
+  addSelectType             = false
+  coerceDate                = false
+  createRelationValuesTypes = true
+  output                    = "../../../<%= prismaProjectRoot %>/src/zod"
+  prismaClientPath          = "@prisma/client-<%= dbPrefix %>"
+  extendZod = "@flowda/schema"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  // relationMode = "prisma"
+}
+
+/// @schema [display_name=<%= groupName %>]
+model <%= className %> {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  isDeleted Boolean  @default(false)
+
+  name       String
+}

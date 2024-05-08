@@ -1,0 +1,7 @@
+import 'reflect-metadata'
+
+describe('<%= fileName %>', () => {
+  it('can pass', () => {
+    expect(true).toBe(true)
+  })
+})

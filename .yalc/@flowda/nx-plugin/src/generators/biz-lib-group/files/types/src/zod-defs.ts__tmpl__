@@ -1,0 +1,10 @@
+import { z } from 'zod'
+import { extendZod, createZodDto } from '@flowda/schema'
+
+extendZod(z)
+
+export const <%= propertyName %> = z.object({
+  <%= propertyName %>: z.string(),
+})
+
+export class <%= className %>Dto extends createZodDto(<%= propertyName %>) {}

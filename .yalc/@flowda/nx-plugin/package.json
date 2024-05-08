@@ -1,0 +1,22 @@
+{
+  "name": "@flowda/nx-plugin",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "generators": "./generators.json",
+  "executors": "./executors.json",
+  "dependencies": {
+    "@rollup/plugin-alias": "5.1.0",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "consola": "3.2.3",
+    "minimatch": "9.0.3",
+    "radash": "12.0.0",
+    "rollup": "4.12.1",
+    "rollup-plugin-dts": "6.1.0",
+    "zod": "3.22.4"
+  },
+  "peerDependencies": {
+    "tslib": "2.6.2"
+  },
+  "types": "./index.bundle.d.ts",
+  "yalcSig": "9a16a3c3f10b066deb66d085c33632df"
+}

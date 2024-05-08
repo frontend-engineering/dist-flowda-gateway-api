@@ -1,0 +1,1 @@
+export const <%= className %>ServiceSymbol = Symbol.for('<%= className %>Service')

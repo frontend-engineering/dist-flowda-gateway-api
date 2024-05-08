@@ -1,0 +1,13 @@
+import { inject, injectable } from 'inversify'
+import { LoggerService } from '@nestjs/common'
+
+@injectable()
+export class <%= className %>Service {
+  private readonly logger
+
+  constructor(
+    @inject('Factory<Logger>') loggerFactory: (name: string) => LoggerService,
+  ) {
+    this.logger = loggerFactory(<%= className %>Service.name)
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "ai-gen-utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.cjs",
+  "scripts": {
+    "dev": "DEV=1 node index.cjs",
+    "dev-p": "DEV=1 node index-part.cjs",
+    "dev-cache": "DEV=1 WithCache=true node index.cjs",
+    "build": "node index.cjs",
+    "build-cache": "WithCache=true node index.cjs",
+    "dev-assets": "DEV=1 node rollup.start.cjs",
+    "bundle-assets": "node rollup.start.cjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.23.7",
+    "@fortaine/fetch-event-source": "^3.0.6",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "fs-extra": "^11.2.0",
+    "handlebars": "^4.7.8",
+    "nanoid": "^3.1.25",
+    "open": "^7.4.2",
+    "request": "^2.88.2"
+  },
+  "yalcSig": "29f85a8cd4dd56e8195f405682da7c06"
+}

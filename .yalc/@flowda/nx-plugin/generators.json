@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "@flowda/nx-plugin",
+  "version": "0.0.1",
+  "generators": {
+    "component": {
+      "factory": "./src/generators/component/generator",
+      "schema": "./src/generators/component/schema.json",
+      "description": "Create a component"
+    },
+    "biz-lib-group": {
+      "factory": "./src/generators/biz-lib-group/generator",
+      "schema": "./src/generators/biz-lib-group/schema.json",
+      "description": "Create a biz lib group"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+templates/*
+dist/*
+images/*
+data/*
+.ai.json
+data.json
+company.json
+deploy.sh
+rollup.*

@@ -1,0 +1,8 @@
+import { ContainerModule, interfaces } from 'inversify'
+import { bindService } from '@flowda/schema'
+import { <%= className %>ServiceSymbol } from '<%= typesImportPath %>'
+import { <%= className %>Service } from './services/<%= fileName %>.service'
+
+export const <%= propertyName %>Module = new ContainerModule((bind: interfaces.Bind) => {
+  bindService(bind, <%= className %>ServiceSymbol, <%= className %>Service)
+})

@@ -1,0 +1,5 @@
+@flowda-projects/flowda-gateway-trpc-server
+
+@flowda-projects/flowda-shared
+
+@flowda-projects/flowda-shared-types

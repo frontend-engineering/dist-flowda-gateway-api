@@ -1,0 +1,11 @@
+import { injectable } from 'inversify'
+import { makeObservable, observable } from 'mobx'
+
+@injectable()
+export class <%= modelName %> {
+  @observable hi = '<%= modelName %>'
+
+  constructor() {
+    makeObservable(this)
+  }
+}

@@ -1,0 +1,16 @@
+import { Component } from 'react'
+import { observer } from 'mobx-react'
+import { <%= modelName %> } from './<%= modelFileName %>'
+
+@observer
+export class <%= componentName %> extends Component<{
+  model: <%= modelName %>
+}> {
+  override render() {
+    return (
+      <div>
+        <p>{this.props.model.hi}</p>
+      </div>
+    )
+  }
+}

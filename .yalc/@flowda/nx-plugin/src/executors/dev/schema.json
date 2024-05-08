@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "cli": "nx",
+  "title": "Dev executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "description": "dist output path"
+    },
+    "main": {
+      "type": "string",
+      "description": "default is `libs/${projectName}/src/index.ts`"
+    },
+    "tsConfig": {
+      "type": "string",
+      "description": "default is `libs/${projectName}/tsconfig.lib.json`"
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "",
+      "default": false
+    },
+    "yalc": {
+      "type": "boolean",
+      "description": "run `yalc publish --push`, `--changed` if watch",
+      "default": true
+    },
+    "bundleDts": {
+      "type": "boolean",
+      "description": "generate ./index.bundle.d.ts",
+      "default": true
+    },
+    "onlyTypes": {
+      "type": "boolean",
+      "description": "only .d.ts, e.g. trpc-server lib",
+      "default": false
+    },
+    "bundleJs": {
+      "type": "boolean",
+      "description": "generate ./index.bundle.js",
+      "default": false
+    }
+  },
+  "required": ["outputPath"]
+}
