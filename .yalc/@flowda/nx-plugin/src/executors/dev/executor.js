@@ -48,8 +48,13 @@ function buildRollupConfig(input) {
             input: input.bundleInput,
             output: [
                 {
-                    file: input.bundleFile,
+                    file: input.bundleFileCjs,
                     format: 'cjs',
+                    interop: 'auto',
+                },
+                {
+                    file: input.bundleFile,
+                    format: 'es',
                     interop: 'auto',
                 },
             ],
@@ -96,11 +101,16 @@ function devExecutor(_options, context) {
                 yield yield tslib_1.__await(output);
                 if (options.bundleDts) {
                     const rollupOptions = buildRollupConfig(zod_def_1.buildRollupConfigInputSchema.parse({
-                        dtsBundleInput: path.join(options.outputPath, `src/index.d.ts`),
+                        dtsBundleInput: options.mts
+                            ? path.join(options.outputPath, `src/index.d.mts`)
+                            : path.join(options.outputPath, `src/index.d.ts`),
                         dtsBundleFile: path.join(options.outputPath, `index.bundle.d.ts`),
                         packageJsonPath: path.join(options.outputPath, `package.json`),
-                        bundleInput: path.join(options.outputPath, `src/index.js`),
+                        bundleInput: options.mts
+                            ? path.join(options.outputPath, `src/index.mjs`)
+                            : path.join(options.outputPath, `src/index.js`),
                         bundleFile: path.join(options.outputPath, `index.bundle.js`),
+                        bundleFileCjs: path.join(options.outputPath, `index.bundle.cjs`),
                         bundleAlias: _.mapValues(options.bundleAlias, value => path.join(context.root, value)),
                         bundleSuppressWarnCodes: options.bundleSuppressWarnCodes,
                         externals: options.externals,
@@ -108,9 +118,16 @@ function devExecutor(_options, context) {
                     }));
                     try {
                         for (const rollupOption of rollupOptions) {
-                            consola_1.default.start(`Bundling ${context.projectName} ${rollupOption.input}...`);
+                            consola_1.default.start(`Bundling [${context.projectName}] ${rollupOption.input}...`);
                             const bundle = yield tslib_1.__await(rollup.rollup(rollupOption));
-                            yield tslib_1.__await(bundle.write(rollupOption.output[0]));
+                            if (Array.isArray(rollupOption.output)) {
+                                for (const output of rollupOption.output) {
+                                    yield tslib_1.__await(bundle.write(output));
+                                }
+                            }
+                            else {
+                                yield tslib_1.__await(bundle.write(rollupOption.output));
+                            }
                             consola_1.default.success(`Bundle done.`);
                         }
                     }
@@ -128,32 +145,40 @@ function devExecutor(_options, context) {
                 const packageJson = (0, devkit_1.readJsonFile)(packageJsonPath);
                 if (options.bundleDts) {
                     packageJson.types = './index.bundle.d.ts';
-                    consola_1.default.info('  to update package.json#types: ./index.bundle.d.ts');
+                    consola_1.default.info('  updated package.json#types: ./index.bundle.d.ts');
                 }
                 else {
                     if (options.yalc) {
                         // 如果不 bundle dts 则 yalc 不用支持 d.ts，因为 yalc 永远会 ignore src/**/*.d.ts
                         delete packageJson.types;
-                        consola_1.default.info('  to delete package.json#types');
+                        consola_1.default.info('  deleted package.json#types');
                     }
                 }
-                if (options.bundleJs) {
-                    packageJson.main = './index.bundle.js';
-                    consola_1.default.info('  to update package.json#main: ./index.bundle.js');
+                if (options.mts && !options.bundleJs) {
+                    packageJson.main = './src/index.mjs';
+                    consola_1.default.info('  updated package.json#main: ./src/index.mjs');
                 }
-                if (options.bundleAlias) {
+                if (options.bundleJs) {
+                    packageJson.main = './index.bundle.cjs';
+                    consola_1.default.info('  updated package.json#main: ./index.bundle.cjs');
+                    packageJson.module = './index.bundle.js';
+                    consola_1.default.info('  updated package.json#module: ./index.bundle.js');
+                    delete packageJson.type;
+                    consola_1.default.info('  deleted package.json#type');
+                }
+                if (Object.keys(options.bundleAlias).length > 0) {
                     Object.keys(options.bundleAlias).forEach(k => {
                         delete packageJson.dependencies[k];
                         delete packageJson.peerDependencies[k];
                     });
-                    consola_1.default.info('  to delete bundleAlias in package.json#{peerDependencies,dependencies}');
+                    consola_1.default.info('  deleted bundleAlias in package.json#{peerDependencies,dependencies}');
                 }
                 if (options.onlyTypes) {
                     delete packageJson.main;
                     delete packageJson.scripts;
                     delete packageJson.peerDependencies;
                     delete packageJson.dependencies;
-                    consola_1.default.info('  to delete package.json#{main,scripts,peerDependencies,dependencies}');
+                    consola_1.default.info('  deleted package.json#{main,scripts,peerDependencies,dependencies}');
                 }
                 (0, devkit_1.writeJsonFile)(`${options.outputPath}/package.json`, packageJson);
                 consola_1.default.success('Updated package.json');

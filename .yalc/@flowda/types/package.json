@@ -1,15 +1,15 @@
 {
   "name": "@flowda/types",
   "version": "0.0.1",
-  "type": "commonjs",
   "peerDependencies": {
-    "tslib": "2.6.2"
+    "tslib": "~2.6.2"
   },
   "dependencies": {
-    "inversify": "6.0.2",
-    "zod": "3.22.4"
+    "inversify": "^6.0.2",
+    "zod": "^3.22.4"
   },
-  "main": "./index.bundle.js",
+  "main": "./index.bundle.cjs",
   "types": "./index.bundle.d.ts",
-  "yalcSig": "d19ec57fdddc04bba373f67431f219ab"
+  "module": "./index.bundle.js",
+  "yalcSig": "824fc262458fd1cde374b2bd9655a1e0"
 }

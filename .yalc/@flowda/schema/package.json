@@ -1,25 +1,25 @@
 {
   "name": "@flowda/schema",
   "version": "0.0.1",
-  "type": "commonjs",
   "dependencies": {
-    "@nestjs/common": "10.3.3",
-    "@paralleldrive/cuid2": "2.2.2",
-    "@prisma/generator-helper": "4.16.2",
-    "consola": "3.2.3",
-    "inversify": "6.0.2",
-    "lodash": "4.17.21",
-    "openapi3-ts": "3.2.0",
-    "radash": "12.0.0",
-    "reflect-metadata": "0.1.14",
-    "ts-deepmerge": "4.0.0",
-    "zod": "3.22.4"
+    "@nestjs/common": "^10.3.3",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "@prisma/generator-helper": "^4.13.0",
+    "consola": "^3.2.3",
+    "inversify": "^6.0.2",
+    "lodash": "^4.17.21",
+    "openapi3-ts": "^3.2.0",
+    "radash": "^12.0.0",
+    "reflect-metadata": "^0.1.13",
+    "ts-deepmerge": "^4.0.0",
+    "zod": "^3.22.4"
   },
   "peerDependencies": {
     "@flowda/types": "0.0.1",
-    "tslib": "2.6.2"
+    "tslib": "~2.6.2"
   },
-  "main": "./index.bundle.js",
+  "main": "./index.bundle.cjs",
   "types": "./index.bundle.d.ts",
-  "yalcSig": "f3111f31098f3fb90fbc9e2757babd7e"
+  "module": "./index.bundle.js",
+  "yalcSig": "44d05b44fa3f6f23926a628bfa8bab99"
 }
