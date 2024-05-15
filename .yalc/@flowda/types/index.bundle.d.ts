@@ -484,13 +484,17 @@ declare const putDataSchema: z.ZodObject<{
 }>;
 
 declare const getResourceInputSchema: z.ZodObject<{
+    tenant: z.ZodString;
     schemaName: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     schemaName: string;
+    tenant: string;
 }, {
     schemaName: string;
+    tenant: string;
 }>;
 declare const findManyResourceDataInputSchema: z.ZodObject<{
+    tenant: z.ZodString;
     schemaName: z.ZodString;
     current: z.ZodNumber;
     pageSize: z.ZodNumber;
@@ -555,6 +559,7 @@ declare const findManyResourceDataInputSchema: z.ZodObject<{
         colId: string;
     }[];
     schemaName: string;
+    tenant: string;
     current: number;
     pageSize: number;
     filterModel: Record<string, {
@@ -576,6 +581,7 @@ declare const findManyResourceDataInputSchema: z.ZodObject<{
         colId: string;
     }[];
     schemaName: string;
+    tenant: string;
     current: number;
     pageSize: number;
     filterModel: Record<string, {
@@ -593,16 +599,20 @@ declare const findManyResourceDataInputSchema: z.ZodObject<{
     }>;
 }>;
 declare const findUniqueResourceDataInputSchema: z.ZodObject<{
+    tenant: z.ZodString;
     schemaName: z.ZodString;
     id: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
     schemaName: string;
     id: number;
+    tenant: string;
 }, {
     schemaName: string;
     id: number;
+    tenant: string;
 }>;
 declare const getResourceDataInputSchema: z.ZodUnion<[z.ZodObject<{
+    tenant: z.ZodString;
     schemaName: z.ZodString;
     current: z.ZodNumber;
     pageSize: z.ZodNumber;
@@ -667,6 +677,7 @@ declare const getResourceDataInputSchema: z.ZodUnion<[z.ZodObject<{
         colId: string;
     }[];
     schemaName: string;
+    tenant: string;
     current: number;
     pageSize: number;
     filterModel: Record<string, {
@@ -688,6 +699,7 @@ declare const getResourceDataInputSchema: z.ZodUnion<[z.ZodObject<{
         colId: string;
     }[];
     schemaName: string;
+    tenant: string;
     current: number;
     pageSize: number;
     filterModel: Record<string, {
@@ -704,14 +716,17 @@ declare const getResourceDataInputSchema: z.ZodUnion<[z.ZodObject<{
         }[];
     }>;
 }>, z.ZodObject<{
+    tenant: z.ZodString;
     schemaName: z.ZodString;
     id: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
     schemaName: string;
     id: number;
+    tenant: string;
 }, {
     schemaName: string;
     id: number;
+    tenant: string;
 }>]>;
 declare const getResourceDataOutputInnerSchema: z.ZodObject<{
     pagination: z.ZodObject<{
@@ -754,16 +769,19 @@ declare const getResourceDataOutputSchema: z.ZodUnion<[z.ZodObject<{
     };
 }>, z.ZodUnknown]>;
 declare const putResourceDataInputSchema: z.ZodObject<{
+    tenant: z.ZodString;
     schemaName: z.ZodString;
     id: z.ZodNumber;
     updatedValue: z.ZodAny;
 }, "strip", z.ZodTypeAny, {
     schemaName: string;
     id: number;
+    tenant: string;
     updatedValue?: any;
 }, {
     schemaName: string;
     id: number;
+    tenant: string;
     updatedValue?: any;
 }>;
 

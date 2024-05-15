@@ -174,9 +174,11 @@ const putDataSchema = z.object({
 });
 
 const getResourceInputSchema = z.object({
+    tenant: z.string(),
     schemaName: z.string(),
 });
 const findManyResourceDataInputSchema = z.object({
+    tenant: z.string(),
     schemaName: z.string(),
     current: z.number(),
     pageSize: z.number(),
@@ -184,6 +186,7 @@ const findManyResourceDataInputSchema = z.object({
     filterModel: agFilterSchema,
 });
 const findUniqueResourceDataInputSchema = z.object({
+    tenant: z.string(),
     schemaName: z.string(),
     id: z.number(),
 });
@@ -201,6 +204,7 @@ const getResourceDataOutputSchema = z.union([
     getResourceDataOutputInnerSchema, z.unknown(),
 ]);
 const putResourceDataInputSchema = z.object({
+    tenant: z.string(),
     schemaName: z.string(),
     id: z.number(),
     updatedValue: z.any(),

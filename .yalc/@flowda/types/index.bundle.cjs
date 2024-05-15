@@ -176,9 +176,11 @@ const putDataSchema = zod.z.object({
 });
 
 const getResourceInputSchema = zod.z.object({
+    tenant: zod.z.string(),
     schemaName: zod.z.string(),
 });
 const findManyResourceDataInputSchema = zod.z.object({
+    tenant: zod.z.string(),
     schemaName: zod.z.string(),
     current: zod.z.number(),
     pageSize: zod.z.number(),
@@ -186,6 +188,7 @@ const findManyResourceDataInputSchema = zod.z.object({
     filterModel: agFilterSchema,
 });
 const findUniqueResourceDataInputSchema = zod.z.object({
+    tenant: zod.z.string(),
     schemaName: zod.z.string(),
     id: zod.z.number(),
 });
@@ -203,6 +206,7 @@ const getResourceDataOutputSchema = zod.z.union([
     getResourceDataOutputInnerSchema, zod.z.unknown(),
 ]);
 const putResourceDataInputSchema = zod.z.object({
+    tenant: zod.z.string(),
     schemaName: zod.z.string(),
     id: zod.z.number(),
     updatedValue: zod.z.any(),
