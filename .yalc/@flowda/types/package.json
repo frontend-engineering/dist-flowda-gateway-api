@@ -11,5 +11,5 @@
   "main": "./index.bundle.cjs",
   "types": "./index.bundle.d.ts",
   "module": "./index.bundle.js",
-  "yalcSig": "c4eb5a8d5188fd481729cfc70691b204"
+  "yalcSig": "206b04af8a85f40275666244166ca9e5"
 }

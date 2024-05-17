@@ -170,7 +170,16 @@ const getDataSchema = z.object({
 const putDataSchema = z.object({
     user: z.any(),
     path: z.string(),
-    values: z.any(),
+    updatedValue: z.any(),
+});
+const postDataSchema = z.object({
+    user: z.any(),
+    path: z.string(),
+    value: z.any(),
+});
+const removeDataSchema = z.object({
+    user: z.any(),
+    path: z.string(),
 });
 
 const getResourceInputSchema = z.object({
@@ -190,24 +199,29 @@ const findUniqueResourceDataInputSchema = z.object({
     schemaName: z.string(),
     id: z.number(),
 });
-const getResourceDataInputSchema = z.union([
-    findManyResourceDataInputSchema,
-    findUniqueResourceDataInputSchema
-]);
+const getResourceDataInputSchema = z.union([findManyResourceDataInputSchema, findUniqueResourceDataInputSchema]);
 const getResourceDataOutputInnerSchema = z.object({
     pagination: z.object({
         total: z.number(),
     }),
     data: z.array(z.any()),
 });
-const getResourceDataOutputSchema = z.union([
-    getResourceDataOutputInnerSchema, z.unknown(),
-]);
+const getResourceDataOutputSchema = z.union([getResourceDataOutputInnerSchema, z.unknown()]);
 const putResourceDataInputSchema = z.object({
     tenant: z.string(),
     schemaName: z.string(),
     id: z.number(),
     updatedValue: z.any(),
+});
+const postResourceDataInputSchema = z.object({
+    tenant: z.string(),
+    schemaName: z.string(),
+    value: z.any(),
+});
+const removeResourceDataInputSchema = z.object({
+    tenant: z.string(),
+    schemaName: z.string(),
+    id: z.union([z.number(), z.string()]).nullable(),
 });
 
 // https://github.com/colinhacks/zod/discussions/2245
@@ -314,4 +328,4 @@ const ManageableWidgetSymbol = Symbol.for('ManageableWidget');
 const ManageableWidgetFactorySymbol = Symbol.for('ManageableWidgetFactory');
 const ManageableModelFactorySymbol = Symbol.for('ManageableModelFactory');
 
-export { ApiServiceSymbol, AssociationKeySchema, CheckManageableFactorySymbol, ColumnKeySchema, ColumnUISchema, CustomResource, CustomResourceSymbol, CustomZodSchemaSymbol, GridModelSymbol, LoginModelSymbol, MANAGEABLE_EDITOR_ID, ManageableModelFactorySymbol, ManageableModelSymbol, ManageableServiceSymbol, ManageableWidgetFactorySymbol, ManageableWidgetSymbol, NOT_REGISTERED, NOT_REGISTERED_SCHEME, NewFormModelSymbol, PreviewModelSymbol, PrismaClientSymbol, ReferenceKeySchema, ResourceKeySchema, ResourceUISchema, ServiceSymbol, TaskFormModelSymbol, ThemeModelSymbol, TreeGridModelSymbol, WorkflowConfigModelSymbol, WorkflowConfigSymbol, agFilterInner2Schema, agFilterInnerSchema, agFilterSchema, agMenuItemSchema, agSortSchema, baseMenuItemSchema, builtinPluginSchema, cellRendererInputSchema, ctxTenantSchema, ctxUserSchema, findManyResourceDataInputSchema, findUniqueResourceDataInputSchema, getDataSchema, getResourceDataInputSchema, getResourceDataOutputInnerSchema, getResourceDataOutputSchema, getResourceInputSchema, handleContextMenuInputSchema, loginInputSchema, loginOutputSchema, menuItemSchema, newFormUriSchema, putDataSchema, putResourceDataInputSchema, resourceKeySchema, selectOptionSchema, taskSchema, taskUriInputSchema, taskUriOutputSchema, treeGridUriQuerySchema, wfCfgSchema };
+export { ApiServiceSymbol, AssociationKeySchema, CheckManageableFactorySymbol, ColumnKeySchema, ColumnUISchema, CustomResource, CustomResourceSymbol, CustomZodSchemaSymbol, GridModelSymbol, LoginModelSymbol, MANAGEABLE_EDITOR_ID, ManageableModelFactorySymbol, ManageableModelSymbol, ManageableServiceSymbol, ManageableWidgetFactorySymbol, ManageableWidgetSymbol, NOT_REGISTERED, NOT_REGISTERED_SCHEME, NewFormModelSymbol, PreviewModelSymbol, PrismaClientSymbol, ReferenceKeySchema, ResourceKeySchema, ResourceUISchema, ServiceSymbol, TaskFormModelSymbol, ThemeModelSymbol, TreeGridModelSymbol, WorkflowConfigModelSymbol, WorkflowConfigSymbol, agFilterInner2Schema, agFilterInnerSchema, agFilterSchema, agMenuItemSchema, agSortSchema, baseMenuItemSchema, builtinPluginSchema, cellRendererInputSchema, ctxTenantSchema, ctxUserSchema, findManyResourceDataInputSchema, findUniqueResourceDataInputSchema, getDataSchema, getResourceDataInputSchema, getResourceDataOutputInnerSchema, getResourceDataOutputSchema, getResourceInputSchema, handleContextMenuInputSchema, loginInputSchema, loginOutputSchema, menuItemSchema, newFormUriSchema, postDataSchema, postResourceDataInputSchema, putDataSchema, putResourceDataInputSchema, removeDataSchema, removeResourceDataInputSchema, resourceKeySchema, selectOptionSchema, taskSchema, taskUriInputSchema, taskUriOutputSchema, treeGridUriQuerySchema, wfCfgSchema };

@@ -472,26 +472,49 @@ declare const getDataSchema: z.ZodObject<{
 declare const putDataSchema: z.ZodObject<{
     user: z.ZodAny;
     path: z.ZodString;
-    values: z.ZodAny;
+    updatedValue: z.ZodAny;
 }, "strip", z.ZodTypeAny, {
     path: string;
     user?: any;
-    values?: any;
+    updatedValue?: any;
 }, {
     path: string;
     user?: any;
-    values?: any;
+    updatedValue?: any;
+}>;
+declare const postDataSchema: z.ZodObject<{
+    user: z.ZodAny;
+    path: z.ZodString;
+    value: z.ZodAny;
+}, "strip", z.ZodTypeAny, {
+    path: string;
+    user?: any;
+    value?: any;
+}, {
+    path: string;
+    user?: any;
+    value?: any;
+}>;
+declare const removeDataSchema: z.ZodObject<{
+    user: z.ZodAny;
+    path: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    path: string;
+    user?: any;
+}, {
+    path: string;
+    user?: any;
 }>;
 
 declare const getResourceInputSchema: z.ZodObject<{
     tenant: z.ZodString;
     schemaName: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    schemaName: string;
     tenant: string;
+    schemaName: string;
 }, {
-    schemaName: string;
     tenant: string;
+    schemaName: string;
 }>;
 declare const findManyResourceDataInputSchema: z.ZodObject<{
     tenant: z.ZodString;
@@ -513,13 +536,13 @@ declare const findManyResourceDataInputSchema: z.ZodObject<{
         type: z.ZodEnum<["contains", "equals"]>;
         filter: z.ZodUnion<[z.ZodString, z.ZodNumber]>;
     }, "strip", z.ZodTypeAny, {
-        filterType: "number" | "text";
         filter: string | number;
         type: "contains" | "equals";
+        filterType: "number" | "text";
     }, {
-        filterType: "number" | "text";
         filter: string | number;
         type: "contains" | "equals";
+        filterType: "number" | "text";
     }>, z.ZodObject<{
         filterType: z.ZodEnum<["text"]>;
         operator: z.ZodEnum<["OR", "AND"]>;
@@ -528,73 +551,73 @@ declare const findManyResourceDataInputSchema: z.ZodObject<{
             type: z.ZodEnum<["contains", "equals"]>;
             filter: z.ZodUnion<[z.ZodString, z.ZodNumber]>;
         }, "strip", z.ZodTypeAny, {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }, {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }>, "many">;
     }, "strip", z.ZodTypeAny, {
         filterType: "text";
         operator: "OR" | "AND";
         conditions: {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }[];
     }, {
         filterType: "text";
         operator: "OR" | "AND";
         conditions: {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }[];
     }>]>>;
 }, "strip", z.ZodTypeAny, {
+    tenant: string;
+    schemaName: string;
     sort: {
         sort: "asc" | "desc";
         colId: string;
     }[];
-    schemaName: string;
-    tenant: string;
     current: number;
     pageSize: number;
     filterModel: Record<string, {
-        filterType: "number" | "text";
         filter: string | number;
         type: "contains" | "equals";
+        filterType: "number" | "text";
     } | {
         filterType: "text";
         operator: "OR" | "AND";
         conditions: {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }[];
     }>;
 }, {
+    tenant: string;
+    schemaName: string;
     sort: {
         sort: "asc" | "desc";
         colId: string;
     }[];
-    schemaName: string;
-    tenant: string;
     current: number;
     pageSize: number;
     filterModel: Record<string, {
-        filterType: "number" | "text";
         filter: string | number;
         type: "contains" | "equals";
+        filterType: "number" | "text";
     } | {
         filterType: "text";
         operator: "OR" | "AND";
         conditions: {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }[];
     }>;
 }>;
@@ -603,13 +626,13 @@ declare const findUniqueResourceDataInputSchema: z.ZodObject<{
     schemaName: z.ZodString;
     id: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
+    tenant: string;
     schemaName: string;
     id: number;
-    tenant: string;
 }, {
+    tenant: string;
     schemaName: string;
     id: number;
-    tenant: string;
 }>;
 declare const getResourceDataInputSchema: z.ZodUnion<[z.ZodObject<{
     tenant: z.ZodString;
@@ -631,13 +654,13 @@ declare const getResourceDataInputSchema: z.ZodUnion<[z.ZodObject<{
         type: z.ZodEnum<["contains", "equals"]>;
         filter: z.ZodUnion<[z.ZodString, z.ZodNumber]>;
     }, "strip", z.ZodTypeAny, {
-        filterType: "number" | "text";
         filter: string | number;
         type: "contains" | "equals";
+        filterType: "number" | "text";
     }, {
-        filterType: "number" | "text";
         filter: string | number;
         type: "contains" | "equals";
+        filterType: "number" | "text";
     }>, z.ZodObject<{
         filterType: z.ZodEnum<["text"]>;
         operator: z.ZodEnum<["OR", "AND"]>;
@@ -646,73 +669,73 @@ declare const getResourceDataInputSchema: z.ZodUnion<[z.ZodObject<{
             type: z.ZodEnum<["contains", "equals"]>;
             filter: z.ZodUnion<[z.ZodString, z.ZodNumber]>;
         }, "strip", z.ZodTypeAny, {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }, {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }>, "many">;
     }, "strip", z.ZodTypeAny, {
         filterType: "text";
         operator: "OR" | "AND";
         conditions: {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }[];
     }, {
         filterType: "text";
         operator: "OR" | "AND";
         conditions: {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }[];
     }>]>>;
 }, "strip", z.ZodTypeAny, {
+    tenant: string;
+    schemaName: string;
     sort: {
         sort: "asc" | "desc";
         colId: string;
     }[];
-    schemaName: string;
-    tenant: string;
     current: number;
     pageSize: number;
     filterModel: Record<string, {
-        filterType: "number" | "text";
         filter: string | number;
         type: "contains" | "equals";
+        filterType: "number" | "text";
     } | {
         filterType: "text";
         operator: "OR" | "AND";
         conditions: {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }[];
     }>;
 }, {
+    tenant: string;
+    schemaName: string;
     sort: {
         sort: "asc" | "desc";
         colId: string;
     }[];
-    schemaName: string;
-    tenant: string;
     current: number;
     pageSize: number;
     filterModel: Record<string, {
-        filterType: "number" | "text";
         filter: string | number;
         type: "contains" | "equals";
+        filterType: "number" | "text";
     } | {
         filterType: "text";
         operator: "OR" | "AND";
         conditions: {
-            filterType: "number" | "text";
             filter: string | number;
             type: "contains" | "equals";
+            filterType: "number" | "text";
         }[];
     }>;
 }>, z.ZodObject<{
@@ -720,13 +743,13 @@ declare const getResourceDataInputSchema: z.ZodUnion<[z.ZodObject<{
     schemaName: z.ZodString;
     id: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
+    tenant: string;
     schemaName: string;
     id: number;
-    tenant: string;
 }, {
+    tenant: string;
     schemaName: string;
     id: number;
-    tenant: string;
 }>]>;
 declare const getResourceDataOutputInnerSchema: z.ZodObject<{
     pagination: z.ZodObject<{
@@ -774,15 +797,41 @@ declare const putResourceDataInputSchema: z.ZodObject<{
     id: z.ZodNumber;
     updatedValue: z.ZodAny;
 }, "strip", z.ZodTypeAny, {
+    tenant: string;
     schemaName: string;
     id: number;
-    tenant: string;
     updatedValue?: any;
 }, {
+    tenant: string;
     schemaName: string;
     id: number;
-    tenant: string;
     updatedValue?: any;
+}>;
+declare const postResourceDataInputSchema: z.ZodObject<{
+    tenant: z.ZodString;
+    schemaName: z.ZodString;
+    value: z.ZodAny;
+}, "strip", z.ZodTypeAny, {
+    tenant: string;
+    schemaName: string;
+    value?: any;
+}, {
+    tenant: string;
+    schemaName: string;
+    value?: any;
+}>;
+declare const removeResourceDataInputSchema: z.ZodObject<{
+    tenant: z.ZodString;
+    schemaName: z.ZodString;
+    id: z.ZodNullable<z.ZodUnion<[z.ZodNumber, z.ZodString]>>;
+}, "strip", z.ZodTypeAny, {
+    tenant: string;
+    schemaName: string;
+    id: string | number | null;
+}, {
+    tenant: string;
+    schemaName: string;
+    id: string | number | null;
 }>;
 
 declare const baseMenuItemSchema: z.ZodObject<{
@@ -1633,6 +1682,8 @@ interface ApiService {
     getResourceSchema: (input: z.infer<typeof getResourceInputSchema>) => Promise<z.infer<typeof ResourceUISchema>>;
     getResourceData: (input: z.infer<typeof getResourceDataInputSchema>) => Promise<z.infer<typeof getResourceDataOutputSchema>>;
     putResourceData: (input: z.infer<typeof putResourceDataInputSchema>) => Promise<unknown>;
+    postResourceData: (input: z.infer<typeof postResourceDataInputSchema>) => Promise<unknown>;
+    removeResourceData: (input: z.infer<typeof removeResourceDataInputSchema>) => Promise<unknown>;
 }
 
 type CellRenderer = (param: CellRendererInput) => JSX.Element;
@@ -1712,4 +1763,4 @@ declare const ManageableWidgetSymbol: unique symbol;
 declare const ManageableWidgetFactorySymbol: unique symbol;
 declare const ManageableModelFactorySymbol: unique symbol;
 
-export { type ApiService, ApiServiceSymbol, type AssociationKey, AssociationKeySchema, type CellRenderer, type CellRendererInput, CheckManageableFactorySymbol, type ColumUI, type ColumnKey, ColumnKeySchema, ColumnUISchema, CustomResource, CustomResourceSymbol, CustomZodSchemaSymbol, type DefaultFormValueType, GridModelSymbol, type ICustomResource, type JSONObject, type JSONValue, LoginModelSymbol, MANAGEABLE_EDITOR_ID, type ManageableModel, ManageableModelFactorySymbol, ManageableModelSymbol, ManageableServiceSymbol, ManageableWidgetFactorySymbol, ManageableWidgetSymbol, type MenuItem, NOT_REGISTERED, NOT_REGISTERED_SCHEME, NewFormModelSymbol, type PluginType, PreviewModelSymbol, PrismaClientSymbol, type ReferenceKey, ReferenceKeySchema, type ResourceKey, ResourceKeySchema, type ResourceUI, ResourceUISchema, ServiceSymbol, type TCtx, TaskFormModelSymbol, ThemeModelSymbol, TreeGridModelSymbol, type WidgetOption, WorkflowConfigModelSymbol, WorkflowConfigSymbol, agFilterInner2Schema, agFilterInnerSchema, agFilterSchema, agMenuItemSchema, agSortSchema, baseMenuItemSchema, builtinPluginSchema, cellRendererInputSchema, ctxTenantSchema, type ctxTenantSchemaDto, ctxUserSchema, type ctxUserSchemaDto, findManyResourceDataInputSchema, findUniqueResourceDataInputSchema, getDataSchema, getResourceDataInputSchema, getResourceDataOutputInnerSchema, getResourceDataOutputSchema, getResourceInputSchema, handleContextMenuInputSchema, loginInputSchema, type loginInputSchemaDto, loginOutputSchema, type loginOutputSchemaDto, menuItemSchema, newFormUriSchema, putDataSchema, putResourceDataInputSchema, resourceKeySchema, selectOptionSchema, taskSchema, taskUriInputSchema, taskUriOutputSchema, treeGridUriQuerySchema, wfCfgSchema };
+export { type ApiService, ApiServiceSymbol, type AssociationKey, AssociationKeySchema, type CellRenderer, type CellRendererInput, CheckManageableFactorySymbol, type ColumUI, type ColumnKey, ColumnKeySchema, ColumnUISchema, CustomResource, CustomResourceSymbol, CustomZodSchemaSymbol, type DefaultFormValueType, GridModelSymbol, type ICustomResource, type JSONObject, type JSONValue, LoginModelSymbol, MANAGEABLE_EDITOR_ID, type ManageableModel, ManageableModelFactorySymbol, ManageableModelSymbol, ManageableServiceSymbol, ManageableWidgetFactorySymbol, ManageableWidgetSymbol, type MenuItem, NOT_REGISTERED, NOT_REGISTERED_SCHEME, NewFormModelSymbol, type PluginType, PreviewModelSymbol, PrismaClientSymbol, type ReferenceKey, ReferenceKeySchema, type ResourceKey, ResourceKeySchema, type ResourceUI, ResourceUISchema, ServiceSymbol, type TCtx, TaskFormModelSymbol, ThemeModelSymbol, TreeGridModelSymbol, type WidgetOption, WorkflowConfigModelSymbol, WorkflowConfigSymbol, agFilterInner2Schema, agFilterInnerSchema, agFilterSchema, agMenuItemSchema, agSortSchema, baseMenuItemSchema, builtinPluginSchema, cellRendererInputSchema, ctxTenantSchema, type ctxTenantSchemaDto, ctxUserSchema, type ctxUserSchemaDto, findManyResourceDataInputSchema, findUniqueResourceDataInputSchema, getDataSchema, getResourceDataInputSchema, getResourceDataOutputInnerSchema, getResourceDataOutputSchema, getResourceInputSchema, handleContextMenuInputSchema, loginInputSchema, type loginInputSchemaDto, loginOutputSchema, type loginOutputSchemaDto, menuItemSchema, newFormUriSchema, postDataSchema, postResourceDataInputSchema, putDataSchema, putResourceDataInputSchema, removeDataSchema, removeResourceDataInputSchema, resourceKeySchema, selectOptionSchema, taskSchema, taskUriInputSchema, taskUriOutputSchema, treeGridUriQuerySchema, wfCfgSchema };
