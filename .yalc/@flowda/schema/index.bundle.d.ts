@@ -1,22 +1,15 @@
 /// <reference types="@types/qs" />
-import { ZodTypeDef, ZodSchema, ZodErrorMap, z, ZodTypeAny } from 'zod';
+import * as _flowda_types from '@flowda/types';
+import { TCtx, ResourceKey, AssociationKey, ColumUI } from '@flowda/types';
+export { createZodDto, extendZod } from '@flowda/types';
 import { interfaces } from 'inversify';
 import * as express from 'express';
 import * as qs from 'qs';
 import * as express_serve_static_core from 'express-serve-static-core';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { ProcedureType, TRPCError, Unwrap, DefaultErrorShape } from '@trpc/server';
-import * as _flowda_types from '@flowda/types';
-import { TCtx, ResourceKey, AssociationKey, ColumUI, ColumnKey, ReferenceKey } from '@flowda/types';
 import { SchemaObject } from 'openapi3-ts';
-
-interface ZodDto<TOutput = any, TDef extends ZodTypeDef = ZodTypeDef, TInput = TOutput> {
-    new (): TOutput;
-    isZodDto: true;
-    schema: ZodSchema<TOutput, TDef, TInput>;
-    create(input: unknown): TOutput;
-}
-declare function createZodDto<TOutput = any, TDef extends ZodTypeDef = ZodTypeDef, TInput = TOutput>(schema: ZodSchema<TOutput, TDef, TInput>): ZodDto<TOutput, TDef, TInput>;
+import { ZodTypeAny } from 'zod';
 
 declare function bindService<T>(bind: interfaces.Bind, constructor: new (...args: never[]) => T): void;
 declare function bindServiceSymbol<T>(bind: interfaces.Bind, implementIdentifier: interfaces.ServiceIdentifier<T>, constructor: interfaces.Newable<T>): void;
@@ -153,27 +146,27 @@ declare class SchemaTransformer {
         properties: undefined;
         required: undefined;
         columns: {
-            column_type: string;
             display_name: string;
-            visible: boolean;
-            access_type: "read_only" | "read_write";
             name: string;
+            visible: boolean;
+            column_type: string;
+            access_type: "read_only" | "read_write";
             validators: unknown[];
-            description?: string | undefined;
             example?: string | undefined;
+            description?: string | undefined;
             plugins?: any;
             reference?: {
                 display_name: string;
+                primary_key: string;
                 model_name: string;
                 foreign_key: string;
-                primary_key: string;
                 reference_type: "belongs_to";
             } | {
                 display_name: string;
+                primary_key: string;
                 visible: boolean;
                 model_name: string;
                 foreign_key: string;
-                primary_key: string;
                 reference_type: "has_one";
             } | undefined;
         }[] | undefined;
@@ -210,67 +203,48 @@ declare function convertToSwage(input: {
     }>>;
 };
 
-declare module 'zod' {
-    interface ZodTypeDef {
-        errorMap?: ZodErrorMap;
-        description?: string;
-        /**
-         * OpenAPI metadata
-         */
-        openapi?: any;
-    }
-    interface ZodSchema<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output> {
-        openapi<T extends ZodSchema<Output, Def, Input>>(this: T, metadata: Partial<SchemaObject>): T;
-        resource<T extends ZodSchema<Output, Def, Input>>(this: T, metadata: Partial<ResourceKey>): T;
-        column<T extends ZodSchema<Output, Def, Input>>(this: T, metadata: Partial<ColumnKey>): T;
-        association<T extends ZodSchema<Output, Def, Input>>(this: T, metadata: AssociationKey): T;
-        reference<T extends ZodSchema<Output, Def, Input>>(this: T, metadata: ReferenceKey): T;
-    }
-}
-declare function extendZod(zod: typeof z, forceOverride?: boolean): void;
-
 declare function zodToOpenAPI(zodRef: ZodTypeAny, useOutput?: boolean): {
-    display_name: string;
-    visible: boolean;
-    slug: string;
-    primary_key: string | null;
     class_name: string;
-    name: string;
-    table_name: string;
+    display_name: string;
     display_primary_key: string;
+    name: string;
+    primary_key: string | null;
+    slug: string;
+    table_name: string;
+    visible: boolean;
     display_column?: string | undefined;
     searchable_columns?: string | undefined;
     plugins?: any;
     properties?: Record<string, {
-        column_type: string;
         display_name: string;
         visible: boolean;
+        column_type: string;
         access_type: "read_only" | "read_write";
         description?: string | undefined;
         example?: string | undefined;
         plugins?: any;
     } | {
         display_name: string;
-        visible: boolean;
+        primary_key: string;
         slug: string;
+        visible: boolean;
         model_name: string;
         foreign_key: string;
-        primary_key: string;
     } | {
         display_name: string;
+        primary_key: string;
         model_name: string;
         foreign_key: string;
-        primary_key: string;
         reference_type: "belongs_to";
     } | {
         display_name: string;
+        primary_key: string;
         visible: boolean;
         model_name: string;
         foreign_key: string;
-        primary_key: string;
         reference_type: "has_one";
     }> | undefined;
     required?: string[] | undefined;
 };
 
-export { ERROR_END, REQ_END, SchemaTransformer, type ZodDto, bindService, bindServiceSymbol, convertToSwage, createContext, createZodDto, diag, errorFormatter, extendZod, getAllResourceSchema, getErrorCodeFromKey, getServices, getStatusKeyFromStatus, ignoredSuffix, logContext, logErrorEnd, logErrorStart, logInputSerialize, logOutputSerialize, processJsonschema, transformHttpException, transformer, traverse, zodToOpenAPI };
+export { ERROR_END, REQ_END, SchemaTransformer, bindService, bindServiceSymbol, convertToSwage, createContext, diag, errorFormatter, getAllResourceSchema, getErrorCodeFromKey, getServices, getStatusKeyFromStatus, ignoredSuffix, logContext, logErrorEnd, logErrorStart, logInputSerialize, logOutputSerialize, processJsonschema, transformHttpException, transformer, traverse, zodToOpenAPI };

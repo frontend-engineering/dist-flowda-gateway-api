@@ -1,27 +1,52 @@
-import { ServiceSymbol, ReferenceKeySchema, AssociationKeySchema, ColumnUISchema } from '@flowda/types';
-export { createZodDto, extendZod } from '@flowda/types';
-import consola from 'consola';
-import * as _ from 'radash';
-import { HttpException } from '@nestjs/common';
-import { repeat, set } from 'lodash';
-import { createId } from '@paralleldrive/cuid2';
-import merge from 'ts-deepmerge';
-import { z } from 'zod';
+'use strict';
+
+var types = require('@flowda/types');
+var consola = require('consola');
+var _ = require('radash');
+var common = require('@nestjs/common');
+var lodash = require('lodash');
+var cuid2 = require('@paralleldrive/cuid2');
+var merge = require('ts-deepmerge');
+var zod = require('zod');
+
+function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
+
+function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var consola__default = /*#__PURE__*/_interopDefault(consola);
+var ___namespace = /*#__PURE__*/_interopNamespace(_);
+var merge__default = /*#__PURE__*/_interopDefault(merge);
 
 function bindService(bind, constructor) {
     bind(constructor).toSelf().inSingletonScope();
-    bind(ServiceSymbol).toFactory((context) => {
+    bind(types.ServiceSymbol).toFactory((context) => {
         return context.container.get(constructor);
     });
 }
 function bindServiceSymbol(bind, implementIdentifier, constructor) {
     bind(implementIdentifier).to(constructor).inSingletonScope();
-    bind(ServiceSymbol).toFactory((context) => {
+    bind(types.ServiceSymbol).toFactory((context) => {
         return context.container.get(implementIdentifier);
     });
 }
 function getServices(servicesContainer) {
-    return servicesContainer.getAll(ServiceSymbol).map((service) => {
+    return servicesContainer.getAll(types.ServiceSymbol).map((service) => {
         return {
             provide: service.constructor,
             useValue: service,
@@ -35,7 +60,7 @@ const REQ_END = '================================================ End ==========
 const ERROR_END = '***************************************** ERROR END *****************************************';
 function logInputSerialize(object) {
     setTimeout(function () {
-        consola.info('request args  :');
+        consola__default.default.info('request args  :');
         console.log(object);
         console.log();
     }, 0);
@@ -44,11 +69,11 @@ function logOutputSerialize(object) {
     setTimeout(function () {
         console.log();
         if ((object === null || object === void 0 ? void 0 : object.code) < 0) {
-            consola.info('response error:');
+            consola__default.default.info('response error:');
             console.log(Object.assign(Object.assign({}, object), { message: '<...>', data: Object.assign(Object.assign({}, object.data), { stack: '<...>' }) }));
         }
         else {
-            consola.info('response data :');
+            consola__default.default.info('response data :');
             const resp = JSON.stringify(object);
             if (resp.length > 1000)
                 console.log(resp.slice(0, 1000) + '...');
@@ -62,8 +87,8 @@ function logContext(opts) {
     setTimeout(function () {
         const req = opts.req;
         console.log('=============================================== Start ===============================================');
-        consola.info('url           :', req.url.split('?')[0]);
-        consola.info('from          :', req.headers['x-from']);
+        consola__default.default.info('url           :', req.url.split('?')[0]);
+        consola__default.default.info('from          :', req.headers['x-from']);
     }, 0);
 }
 function getStatusKeyFromStatus(status) {
@@ -91,7 +116,7 @@ const JSONRPC2_TO_HTTP_CODE = {
     INTERNAL_SERVER_ERROR: 500,
     NOT_IMPLEMENTED: 501,
 };
-const JSONRPC2_TO_HTTP_STATUS = _.invert(JSONRPC2_TO_HTTP_CODE);
+const JSONRPC2_TO_HTTP_STATUS = ___namespace.invert(JSONRPC2_TO_HTTP_CODE);
 const TRPC_ERROR_CODES_BY_KEY = {
     /**
      * Invalid JSON was received by the server.
@@ -120,17 +145,17 @@ const TRPC_ERROR_CODES_BY_KEY = {
 };
 function logErrorStart(opts) {
     setTimeout(function () {
-        consola.error('**************************************** ERROR START ****************************************');
-        consola.info(`procedure    :`, `${opts.path}.${opts.type}`);
-        consola.info(`input        :`);
+        consola__default.default.error('**************************************** ERROR START ****************************************');
+        consola__default.default.info(`procedure    :`, `${opts.path}.${opts.type}`);
+        consola__default.default.info(`input        :`);
         console.log(opts.input);
     }, 0);
 }
 function logErrorEnd(opts) {
     setTimeout(function () {
-        consola.info(`message      :`, opts.error.message);
-        consola.info(`stack        :`, opts.error.stack);
-        consola.error(ERROR_END);
+        consola__default.default.info(`message      :`, opts.error.message);
+        consola__default.default.info(`stack        :`, opts.error.stack);
+        consola__default.default.error(ERROR_END);
     }, 0);
 }
 function transformHttpException(opts, json) {
@@ -138,12 +163,12 @@ function transformHttpException(opts, json) {
     const key = getStatusKeyFromStatus(json.status);
     const code = getErrorCodeFromKey(key);
     setTimeout(function () {
-        consola.info(`cause`);
+        consola__default.default.info(`cause`);
         console.log(`    status     :`, json.status);
         console.log(`    message    :`, json.message);
         console.log(`    error      :`, json.error);
-        consola.info(`stack        :`, json.stack);
-        consola.error(ERROR_END);
+        consola__default.default.info(`stack        :`, json.stack);
+        consola__default.default.error(ERROR_END);
     }, 0);
     return Object.assign(Object.assign({}, shape), { code, 
         // message // message 无需替代 throw new ConflictException('<message>') 第一个参数已经替代了 https://docs.nestjs.com/exception-filters#built-in-http-exceptions
@@ -169,13 +194,13 @@ function errorFormatter(opts, handlers) {
     const tenantId = ((_d = (_c = opts.ctx) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.tenantId) || ((_f = (_e = opts.ctx) === null || _e === void 0 ? void 0 : _e.tenant) === null || _f === void 0 ? void 0 : _f.id);
     const userId = (_h = (_g = opts.ctx) === null || _g === void 0 ? void 0 : _g.user) === null || _h === void 0 ? void 0 : _h.id;
     logErrorStart(opts);
-    consola.info(`tenantId     :`, tenantId);
-    consola.info(`userId       :`, userId);
+    consola__default.default.info(`tenantId     :`, tenantId);
+    consola__default.default.info(`userId       :`, userId);
     if (Array.isArray((_j = opts.ctx) === null || _j === void 0 ? void 0 : _j._diagnosis) && opts.ctx._diagnosis.length > 0) {
-        consola.info(`trace:`);
+        consola__default.default.info(`trace:`);
         const msg = opts.ctx._diagnosis
             .map((m) => {
-            const indent = repeat(' ', 4);
+            const indent = lodash.repeat(' ', 4);
             const msg = m.map(i => (typeof i === 'string' ? i : JSON.stringify(i))).join(', ');
             return indent + msg;
         })
@@ -184,7 +209,7 @@ function errorFormatter(opts, handlers) {
         console.log();
     }
     // 如果是 nestjs HttpException
-    if (opts.error.cause instanceof HttpException) {
+    if (opts.error.cause instanceof common.HttpException) {
         const json2 = {
             status: opts.error.cause.getStatus(),
             message: opts.error.cause.getResponse()['message'],
@@ -244,9 +269,9 @@ const transformer = {
 };
 function createContext(opts) {
     logContext(opts);
-    const requestId = createId();
+    const requestId = cuid2.createId();
     opts.res.setHeader('x-request-id', requestId);
-    consola.info('x-request-id  :', requestId);
+    consola__default.default.info('x-request-id  :', requestId);
     return {
         req: opts.req,
         res: opts.res,
@@ -321,7 +346,7 @@ class SchemaTransformer {
     toJSON() {
         if (!this.jsonschema)
             throw new Error(`No jsonschema set`);
-        return _.omit(Object.assign(Object.assign({}, this.jsonschema), { properties: undefined, required: undefined, columns: this.columns, associations: this.associations }), ['properties', 'required']);
+        return ___namespace.omit(Object.assign(Object.assign({}, this.jsonschema), { properties: undefined, required: undefined, columns: this.columns, associations: this.associations }), ['properties', 'required']);
     }
 }
 function processJsonschema(jsonschema) {
@@ -338,7 +363,7 @@ function processJsonschema(jsonschema) {
     })
         .map(k => {
         const prop = props[k];
-        const ret = ReferenceKeySchema.safeParse(prop);
+        const ret = types.ReferenceKeySchema.safeParse(prop);
         if (!ret.success)
             throw new Error(`reference parse error, k:${k}, prop: ${JSON.stringify(prop)}, error: ${ret.error.message}`);
         return ret.data;
@@ -350,7 +375,7 @@ function processJsonschema(jsonschema) {
             return acc;
         }
         if ('model_name' in prop && !('reference_type' in prop)) {
-            const ret = AssociationKeySchema.safeParse(Object.assign(Object.assign({}, prop), { name: cur }));
+            const ret = types.AssociationKeySchema.safeParse(Object.assign(Object.assign({}, prop), { name: cur }));
             if (!ret.success)
                 throw new Error(`association parse error, k:${cur}, prop: ${JSON.stringify(prop)}, error: ${ret.error.message}`);
             acc.associations.push(ret.data);
@@ -359,7 +384,7 @@ function processJsonschema(jsonschema) {
         const ref = refCols.find(r => r.foreign_key === cur);
         let colParseRet;
         if ('reference_type' in prop && prop.reference_type === 'has_one') {
-            colParseRet = ColumnUISchema.safeParse({
+            colParseRet = types.ColumnUISchema.safeParse({
                 column_type: 'reference',
                 display_name: prop.display_name,
                 //            ^?
@@ -370,7 +395,7 @@ function processJsonschema(jsonschema) {
             });
         }
         else if ('column_type' in prop) {
-            colParseRet = ColumnUISchema.safeParse(Object.assign(Object.assign({}, prop), { name: cur, validators: [], reference: ref }));
+            colParseRet = types.ColumnUISchema.safeParse(Object.assign(Object.assign({}, prop), { name: cur, validators: [], reference: ref }));
         }
         else {
             throw new Error(`unknown branch, ${JSON.stringify(prop)}`);
@@ -423,7 +448,7 @@ function extractToDef(defs, body) {
     const example = {};
     traverse('root', bodyIn.schema, (p, node) => {
         if (!!(node === null || node === void 0 ? void 0 : node.description) || !!(node === null || node === void 0 ? void 0 : node.example)) {
-            set(example, p, `${node.description}(e.g. ${node.example})`);
+            lodash.set(example, p, `${node.description}(e.g. ${node.example})`);
         }
     });
     defs[title] = Object.assign(Object.assign({}, bodyIn.schema), { example: example.root || {} });
@@ -478,7 +503,7 @@ function parseTransformation({ zodRef, schemas, useOutput, }) {
             }
         }
     }
-    return merge(Object.assign(Object.assign(Object.assign({}, (zodRef.description ? { description: zodRef.description } : {})), input), (['number', 'string', 'boolean', 'null'].includes(output)
+    return merge__default.default(Object.assign(Object.assign(Object.assign({}, (zodRef.description ? { description: zodRef.description } : {})), input), (['number', 'string', 'boolean', 'null'].includes(output)
         ? {
             type: output,
         }
@@ -521,7 +546,7 @@ function parseString({ zodRef, schemas, }) {
                 break;
         }
     });
-    return merge(baseSchema, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default(baseSchema, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseNumber({ zodRef, schemas, }) {
     const baseSchema = {
@@ -548,13 +573,13 @@ function parseNumber({ zodRef, schemas, }) {
                 baseSchema.multipleOf = item.value;
         }
     });
-    return merge(baseSchema, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default(baseSchema, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseObject({ zodRef, schemas, useOutput, }) {
     var _a;
     let additionalProperties;
     // `catchall` obviates `strict`, `strip`, and `passthrough`
-    if (!(zodRef._def.catchall instanceof z.ZodNever ||
+    if (!(zodRef._def.catchall instanceof zod.z.ZodNever ||
         ((_a = zodRef._def.catchall) === null || _a === void 0 ? void 0 : _a._def.typeName) === 'ZodNever'))
         additionalProperties = generateSchema(zodRef._def.catchall, useOutput);
     else if (zodRef._def.unknownKeys === 'passthrough')
@@ -566,46 +591,46 @@ function parseObject({ zodRef, schemas, useOutput, }) {
     const requiredProperties = Object.keys(zodRef.shape).filter((key) => {
         const item = zodRef.shape[key];
         return (!(item.isOptional() ||
-            item instanceof z.ZodDefault ||
+            item instanceof zod.z.ZodDefault ||
             item._def.typeName === 'ZodDefault') &&
-            !(item instanceof z.ZodNever || item._def.typeName === 'ZodDefault'));
+            !(item instanceof zod.z.ZodNever || item._def.typeName === 'ZodDefault'));
     });
     const required = requiredProperties.length > 0 ? { required: requiredProperties } : {};
-    return merge(Object.assign(Object.assign({ type: 'object', properties: iterateZodObject({
+    return merge__default.default(Object.assign(Object.assign({ type: 'object', properties: iterateZodObject({
             zodRef: zodRef,
             schemas,
             useOutput,
         }) }, required), additionalProperties), zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseRecord({ zodRef, schemas, useOutput, }) {
-    return merge({
+    return merge__default.default({
         type: 'object',
-        additionalProperties: zodRef._def.valueType instanceof z.ZodUnknown
+        additionalProperties: zodRef._def.valueType instanceof zod.z.ZodUnknown
             ? {}
             : generateSchema(zodRef._def.valueType, useOutput),
     }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseBigInt({ zodRef, schemas, }) {
-    return merge({ type: 'integer', format: 'int64' }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default({ type: 'integer', format: 'int64' }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseBoolean({ zodRef, schemas, }) {
-    return merge({ type: 'boolean' }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default({ type: 'boolean' }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseDate({ zodRef, schemas }) {
-    return merge({ type: 'string', format: 'date-time' }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default({ type: 'string', format: 'date-time' }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseNull({ zodRef, schemas }) {
-    return merge({
+    return merge__default.default({
         type: 'string',
         format: 'null',
         nullable: true,
     }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseOptionalNullable({ schemas, zodRef, useOutput, }) {
-    return merge(generateSchema(zodRef.unwrap(), useOutput), zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default(generateSchema(zodRef.unwrap(), useOutput), zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseDefault({ schemas, zodRef, useOutput, }) {
-    return merge(Object.assign({ default: zodRef._def.defaultValue() }, generateSchema(zodRef._def.innerType, useOutput)), zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default(Object.assign({ default: zodRef._def.defaultValue() }, generateSchema(zodRef._def.innerType, useOutput)), zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseArray({ schemas, zodRef, useOutput, }) {
     const constraints = {};
@@ -617,22 +642,22 @@ function parseArray({ schemas, zodRef, useOutput, }) {
         constraints.minItems = zodRef._def.minLength.value;
     if (zodRef._def.maxLength != null)
         constraints.maxItems = zodRef._def.maxLength.value;
-    return merge(Object.assign({ type: 'array', items: generateSchema(zodRef.element, useOutput) }, constraints), zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default(Object.assign({ type: 'array', items: generateSchema(zodRef.element, useOutput) }, constraints), zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseLiteral({ schemas, zodRef, }) {
-    return merge({
+    return merge__default.default({
         type: typeof zodRef._def.value,
         enum: [zodRef._def.value],
     }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseEnum({ schemas, zodRef, }) {
-    return merge({
+    return merge__default.default({
         type: typeof Object.values(zodRef._def.values)[0],
         enum: Object.values(zodRef._def.values),
     }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseIntersection({ schemas, zodRef, useOutput, }) {
-    return merge({
+    return merge__default.default({
         allOf: [
             generateSchema(zodRef._def.left, useOutput),
             generateSchema(zodRef._def.right, useOutput),
@@ -640,12 +665,12 @@ function parseIntersection({ schemas, zodRef, useOutput, }) {
     }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseUnion({ schemas, zodRef, useOutput, }) {
-    return merge({
+    return merge__default.default({
         oneOf: zodRef._def.options.map((schema) => generateSchema(schema, useOutput)),
     }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseDiscriminatedUnion({ schemas, zodRef, useOutput, }) {
-    return merge({
+    return merge__default.default({
         discriminator: {
             propertyName: zodRef._def.discriminator,
         },
@@ -653,13 +678,13 @@ function parseDiscriminatedUnion({ schemas, zodRef, useOutput, }) {
     }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseNever({ zodRef, schemas, }) {
-    return merge({ readOnly: true }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default({ readOnly: true }, zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 function parseBranded({ schemas, zodRef, }) {
-    return merge(generateSchema(zodRef._def.type), ...schemas);
+    return merge__default.default(generateSchema(zodRef._def.type), ...schemas);
 }
 function catchAllParser({ zodRef, schemas, }) {
-    return merge(zodRef.description ? { description: zodRef.description } : {}, ...schemas);
+    return merge__default.default(zodRef.description ? { description: zodRef.description } : {}, ...schemas);
 }
 const workerMap = {
     ZodObject: parseObject,
@@ -723,4 +748,35 @@ function zodToOpenAPI(zodRef, useOutput) {
     return generateSchema(zodRef, useOutput);
 }
 
-export { ERROR_END, REQ_END, SchemaTransformer, bindService, bindServiceSymbol, convertToSwage, createContext, diag, errorFormatter, getAllResourceSchema, getErrorCodeFromKey, getServices, getStatusKeyFromStatus, ignoredSuffix, logContext, logErrorEnd, logErrorStart, logInputSerialize, logOutputSerialize, processJsonschema, transformHttpException, transformer, traverse, zodToOpenAPI };
+Object.defineProperty(exports, "createZodDto", {
+    enumerable: true,
+    get: function () { return types.createZodDto; }
+});
+Object.defineProperty(exports, "extendZod", {
+    enumerable: true,
+    get: function () { return types.extendZod; }
+});
+exports.ERROR_END = ERROR_END;
+exports.REQ_END = REQ_END;
+exports.SchemaTransformer = SchemaTransformer;
+exports.bindService = bindService;
+exports.bindServiceSymbol = bindServiceSymbol;
+exports.convertToSwage = convertToSwage;
+exports.createContext = createContext;
+exports.diag = diag;
+exports.errorFormatter = errorFormatter;
+exports.getAllResourceSchema = getAllResourceSchema;
+exports.getErrorCodeFromKey = getErrorCodeFromKey;
+exports.getServices = getServices;
+exports.getStatusKeyFromStatus = getStatusKeyFromStatus;
+exports.ignoredSuffix = ignoredSuffix;
+exports.logContext = logContext;
+exports.logErrorEnd = logErrorEnd;
+exports.logErrorStart = logErrorStart;
+exports.logInputSerialize = logInputSerialize;
+exports.logOutputSerialize = logOutputSerialize;
+exports.processJsonschema = processJsonschema;
+exports.transformHttpException = transformHttpException;
+exports.transformer = transformer;
+exports.traverse = traverse;
+exports.zodToOpenAPI = zodToOpenAPI;

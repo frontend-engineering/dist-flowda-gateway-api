@@ -1,8 +1,5 @@
 {
-  "scripts": {
-    "serve": "../../node_modules/.bin/dotenv -e .env.dev -- ../../node_modules/.bin/nx run flowda-gateway-api:serve",
-    "serve:prod": "../../node_modules/.bin/dotenv -e .env.dev -- ../../node_modules/.bin/nx run flowda-gateway-api:serve:production"
-  },
+  "scripts": {},
   "name": "@flowda-projects/flowda-gateway-api",
   "dependencies": {
     "@flowda/schema": "file:.yalc/@flowda/schema",
@@ -25,6 +22,7 @@
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.21",
     "nestjs-zod": "2.3.3",
+    "passport-jwt": "4.0.1",
     "pluralize": "8.0.0",
     "qs": "6.12.1",
     "radash": "11.0.0",

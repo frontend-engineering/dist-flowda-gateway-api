@@ -5,6 +5,11 @@
       "implementation": "./src/executors/dev/executor",
       "schema": "./src/executors/dev/schema.json",
       "description": "dev executor"
+    },
+    "pm2-deploy": {
+      "implementation": "./src/executors/pm2-deploy/executor",
+      "schema": "./src/executors/pm2-deploy/schema.json",
+      "description": "PM2 deploy executor"
     }
   }
 }
