@@ -33,17 +33,6 @@ var consola__default = /*#__PURE__*/_interopDefault(consola);
 var ___namespace = /*#__PURE__*/_interopNamespace(_);
 var merge__default = /*#__PURE__*/_interopDefault(merge);
 
-function createZodDto(schema) {
-    class AugmentedZodDto {
-        static create(input) {
-            return this.schema.parse(input);
-        }
-    }
-    AugmentedZodDto.isZodDto = true;
-    AugmentedZodDto.schema = schema;
-    return AugmentedZodDto;
-}
-
 function bindService(bind, constructor) {
     bind(constructor).toSelf().inSingletonScope();
     bind(types.ServiceSymbol).toFactory((context) => {
@@ -484,11 +473,6 @@ function convertToSwage(input) {
     return Object.assign(Object.assign({}, input), { definitions: defs });
 }
 
-function extendApi(schema, SchemaObject = {}) {
-    const openapi = Object.assign(Object.assign({}, schema._def.openapi), SchemaObject);
-    const newSchema = new schema.constructor(Object.assign(Object.assign({}, schema._def), { openapi: openapi /* for zod-openapi */ }));
-    return newSchema;
-}
 function iterateZodObject({ zodRef, useOutput, }) {
     return Object.keys(zodRef.shape).reduce((carry, key) => (Object.assign(Object.assign({}, carry), { [key]: generateSchema(zodRef.shape[key], useOutput) })), {});
 }
@@ -760,50 +744,18 @@ function generateSchema(zodRef, useOutput) {
     }
 }
 
-function extendZod(zod, forceOverride = false) {
-    if (forceOverride || typeof zod.ZodSchema.prototype.openapi === 'undefined') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        zod.ZodSchema.prototype.openapi = function (metadata) {
-            return extendApi(this, metadata);
-        };
-    }
-    if (forceOverride || typeof zod.ZodSchema.prototype.resource === 'undefined') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        zod.ZodSchema.prototype.resource = function (metadata) {
-            return extendApi(this, metadata);
-        };
-    }
-    if (forceOverride || typeof zod.ZodSchema.prototype.column === 'undefined') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        zod.ZodSchema.prototype.column = function (metadata) {
-            return extendApi(this, metadata);
-        };
-    }
-    if (forceOverride || typeof zod.ZodSchema.prototype.reference === 'undefined') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        zod.ZodSchema.prototype.reference = function (metadata) {
-            return extendApi(this, metadata);
-        };
-    }
-    if (forceOverride || typeof zod.ZodSchema.prototype.association === 'undefined') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        zod.ZodSchema.prototype.association = function (metadata) {
-            return extendApi(this, metadata);
-        };
-    }
-    const zodObjectMerge = zod.ZodObject.prototype.merge;
-    zod.ZodObject.prototype.merge = function (...args) {
-        const mergedResult = zodObjectMerge.apply(this, args);
-        mergedResult._def.openapi = Object.assign(Object.assign({}, this._def.openapi), args[0]._def.openapi);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
-        return mergedResult;
-    };
-}
-
 function zodToOpenAPI(zodRef, useOutput) {
     return generateSchema(zodRef, useOutput);
 }
 
+Object.defineProperty(exports, "createZodDto", {
+    enumerable: true,
+    get: function () { return types.createZodDto; }
+});
+Object.defineProperty(exports, "extendZod", {
+    enumerable: true,
+    get: function () { return types.extendZod; }
+});
 exports.ERROR_END = ERROR_END;
 exports.REQ_END = REQ_END;
 exports.SchemaTransformer = SchemaTransformer;
@@ -811,10 +763,8 @@ exports.bindService = bindService;
 exports.bindServiceSymbol = bindServiceSymbol;
 exports.convertToSwage = convertToSwage;
 exports.createContext = createContext;
-exports.createZodDto = createZodDto;
 exports.diag = diag;
 exports.errorFormatter = errorFormatter;
-exports.extendZod = extendZod;
 exports.getAllResourceSchema = getAllResourceSchema;
 exports.getErrorCodeFromKey = getErrorCodeFromKey;
 exports.getServices = getServices;

@@ -6,10 +6,11 @@
   },
   "dependencies": {
     "inversify": "^6.0.2",
+    "openapi3-ts": "^3.2.0",
     "zod": "^3.22.4"
   },
   "main": "./index.bundle.cjs",
   "types": "./index.bundle.d.ts",
   "module": "./index.bundle.js",
-  "yalcSig": "206b04af8a85f40275666244166ca9e5"
+  "yalcSig": "243d15d497a5ce34272a6ed42a72d335"
 }

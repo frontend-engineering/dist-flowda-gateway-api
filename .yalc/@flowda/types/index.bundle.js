@@ -1,6 +1,7 @@
 import { __decorate } from 'tslib';
 import { injectable } from 'inversify';
 import { z } from 'zod';
+import 'ts-deepmerge';
 
 /// <reference types="@types/react" />
 function CustomResource(schemaName) {
@@ -328,4 +329,61 @@ const ManageableWidgetSymbol = Symbol.for('ManageableWidget');
 const ManageableWidgetFactorySymbol = Symbol.for('ManageableWidgetFactory');
 const ManageableModelFactorySymbol = Symbol.for('ManageableModelFactory');
 
-export { ApiServiceSymbol, AssociationKeySchema, CheckManageableFactorySymbol, ColumnKeySchema, ColumnUISchema, CustomResource, CustomResourceSymbol, CustomZodSchemaSymbol, GridModelSymbol, LoginModelSymbol, MANAGEABLE_EDITOR_ID, ManageableModelFactorySymbol, ManageableModelSymbol, ManageableServiceSymbol, ManageableWidgetFactorySymbol, ManageableWidgetSymbol, NOT_REGISTERED, NOT_REGISTERED_SCHEME, NewFormModelSymbol, PreviewModelSymbol, PrismaClientSymbol, ReferenceKeySchema, ResourceKeySchema, ResourceUISchema, ServiceSymbol, TaskFormModelSymbol, ThemeModelSymbol, TreeGridModelSymbol, WorkflowConfigModelSymbol, WorkflowConfigSymbol, agFilterInner2Schema, agFilterInnerSchema, agFilterSchema, agMenuItemSchema, agSortSchema, baseMenuItemSchema, builtinPluginSchema, cellRendererInputSchema, ctxTenantSchema, ctxUserSchema, findManyResourceDataInputSchema, findUniqueResourceDataInputSchema, getDataSchema, getResourceDataInputSchema, getResourceDataOutputInnerSchema, getResourceDataOutputSchema, getResourceInputSchema, handleContextMenuInputSchema, loginInputSchema, loginOutputSchema, menuItemSchema, newFormUriSchema, postDataSchema, postResourceDataInputSchema, putDataSchema, putResourceDataInputSchema, removeDataSchema, removeResourceDataInputSchema, resourceKeySchema, selectOptionSchema, taskSchema, taskUriInputSchema, taskUriOutputSchema, treeGridUriQuerySchema, wfCfgSchema };
+function extendApi(schema, SchemaObject = {}) {
+    const openapi = Object.assign(Object.assign({}, schema._def.openapi), SchemaObject);
+    const newSchema = new schema.constructor(Object.assign(Object.assign({}, schema._def), { openapi: openapi /* for zod-openapi */ }));
+    return newSchema;
+}
+
+function extendZod(zod, forceOverride = false) {
+    if (forceOverride || typeof zod.ZodSchema.prototype.openapi === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.openapi = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    if (forceOverride || typeof zod.ZodSchema.prototype.resource === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.resource = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    if (forceOverride || typeof zod.ZodSchema.prototype.column === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.column = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    if (forceOverride || typeof zod.ZodSchema.prototype.reference === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.reference = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    if (forceOverride || typeof zod.ZodSchema.prototype.association === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.association = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    const zodObjectMerge = zod.ZodObject.prototype.merge;
+    zod.ZodObject.prototype.merge = function (...args) {
+        const mergedResult = zodObjectMerge.apply(this, args);
+        mergedResult._def.openapi = Object.assign(Object.assign({}, this._def.openapi), args[0]._def.openapi);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+        return mergedResult;
+    };
+}
+
+function createZodDto(schema) {
+    class AugmentedZodDto {
+        static create(input) {
+            return this.schema.parse(input);
+        }
+    }
+    AugmentedZodDto.isZodDto = true;
+    AugmentedZodDto.schema = schema;
+    return AugmentedZodDto;
+}
+
+export { ApiServiceSymbol, AssociationKeySchema, CheckManageableFactorySymbol, ColumnKeySchema, ColumnUISchema, CustomResource, CustomResourceSymbol, CustomZodSchemaSymbol, GridModelSymbol, LoginModelSymbol, MANAGEABLE_EDITOR_ID, ManageableModelFactorySymbol, ManageableModelSymbol, ManageableServiceSymbol, ManageableWidgetFactorySymbol, ManageableWidgetSymbol, NOT_REGISTERED, NOT_REGISTERED_SCHEME, NewFormModelSymbol, PreviewModelSymbol, PrismaClientSymbol, ReferenceKeySchema, ResourceKeySchema, ResourceUISchema, ServiceSymbol, TaskFormModelSymbol, ThemeModelSymbol, TreeGridModelSymbol, WorkflowConfigModelSymbol, WorkflowConfigSymbol, agFilterInner2Schema, agFilterInnerSchema, agFilterSchema, agMenuItemSchema, agSortSchema, baseMenuItemSchema, builtinPluginSchema, cellRendererInputSchema, createZodDto, ctxTenantSchema, ctxUserSchema, extendZod, findManyResourceDataInputSchema, findUniqueResourceDataInputSchema, getDataSchema, getResourceDataInputSchema, getResourceDataOutputInnerSchema, getResourceDataOutputSchema, getResourceInputSchema, handleContextMenuInputSchema, loginInputSchema, loginOutputSchema, menuItemSchema, newFormUriSchema, postDataSchema, postResourceDataInputSchema, putDataSchema, putResourceDataInputSchema, removeDataSchema, removeResourceDataInputSchema, resourceKeySchema, selectOptionSchema, taskSchema, taskUriInputSchema, taskUriOutputSchema, treeGridUriQuerySchema, wfCfgSchema };

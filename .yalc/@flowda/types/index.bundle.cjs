@@ -3,6 +3,7 @@
 var tslib = require('tslib');
 var inversify = require('inversify');
 var zod = require('zod');
+require('ts-deepmerge');
 
 /// <reference types="@types/react" />
 function CustomResource(schemaName) {
@@ -330,6 +331,63 @@ const ManageableWidgetSymbol = Symbol.for('ManageableWidget');
 const ManageableWidgetFactorySymbol = Symbol.for('ManageableWidgetFactory');
 const ManageableModelFactorySymbol = Symbol.for('ManageableModelFactory');
 
+function extendApi(schema, SchemaObject = {}) {
+    const openapi = Object.assign(Object.assign({}, schema._def.openapi), SchemaObject);
+    const newSchema = new schema.constructor(Object.assign(Object.assign({}, schema._def), { openapi: openapi /* for zod-openapi */ }));
+    return newSchema;
+}
+
+function extendZod(zod, forceOverride = false) {
+    if (forceOverride || typeof zod.ZodSchema.prototype.openapi === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.openapi = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    if (forceOverride || typeof zod.ZodSchema.prototype.resource === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.resource = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    if (forceOverride || typeof zod.ZodSchema.prototype.column === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.column = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    if (forceOverride || typeof zod.ZodSchema.prototype.reference === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.reference = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    if (forceOverride || typeof zod.ZodSchema.prototype.association === 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        zod.ZodSchema.prototype.association = function (metadata) {
+            return extendApi(this, metadata);
+        };
+    }
+    const zodObjectMerge = zod.ZodObject.prototype.merge;
+    zod.ZodObject.prototype.merge = function (...args) {
+        const mergedResult = zodObjectMerge.apply(this, args);
+        mergedResult._def.openapi = Object.assign(Object.assign({}, this._def.openapi), args[0]._def.openapi);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+        return mergedResult;
+    };
+}
+
+function createZodDto(schema) {
+    class AugmentedZodDto {
+        static create(input) {
+            return this.schema.parse(input);
+        }
+    }
+    AugmentedZodDto.isZodDto = true;
+    AugmentedZodDto.schema = schema;
+    return AugmentedZodDto;
+}
+
 exports.ApiServiceSymbol = ApiServiceSymbol;
 exports.AssociationKeySchema = AssociationKeySchema;
 exports.CheckManageableFactorySymbol = CheckManageableFactorySymbol;
@@ -368,8 +426,10 @@ exports.agSortSchema = agSortSchema;
 exports.baseMenuItemSchema = baseMenuItemSchema;
 exports.builtinPluginSchema = builtinPluginSchema;
 exports.cellRendererInputSchema = cellRendererInputSchema;
+exports.createZodDto = createZodDto;
 exports.ctxTenantSchema = ctxTenantSchema;
 exports.ctxUserSchema = ctxUserSchema;
+exports.extendZod = extendZod;
 exports.findManyResourceDataInputSchema = findManyResourceDataInputSchema;
 exports.findUniqueResourceDataInputSchema = findUniqueResourceDataInputSchema;
 exports.getDataSchema = getDataSchema;

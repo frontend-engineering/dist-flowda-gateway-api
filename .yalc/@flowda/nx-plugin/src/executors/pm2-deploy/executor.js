@@ -5,6 +5,7 @@ const devkit_1 = require("@nrwl/devkit");
 const child_process_1 = require("child_process");
 const zod_def_1 = require("./zod-def");
 const consola_1 = require("consola");
+const path = require("path");
 const TAR_NAME = 'pm2-deploy.tar.gz';
 function pm2DeployExecutor(_options, context) {
     var _a;
@@ -46,7 +47,8 @@ function pm2DeployExecutor(_options, context) {
         consola_1.default.success('  done (force remove .yalc in node_modules)');
         consola_1.default.start('  copy extra output');
         opt.extraOutput.forEach(output => {
-            (0, child_process_1.execSync)(`${sshCmd} "cd ${opt.path}/release && cp -r ${output} ${opt.buildOutput}"`, {
+            const targetDir = path.join(opt.buildOutput, path.dirname(output));
+            (0, child_process_1.execSync)(`${sshCmd} "cd ${opt.path}/release && mkdir -p ${targetDir} && cp -r ${output} ${targetDir}"`, {
                 cwd: devkit_1.workspaceRoot,
                 stdio: 'inherit',
             });
